@@ -1,0 +1,7 @@
+{
+    "id": "maya2015",
+    "label": "Maya 2015",
+    "tool": "maya2015",
+    "executable": "maya",
+    "icon": "maya-logo.png"
+}
