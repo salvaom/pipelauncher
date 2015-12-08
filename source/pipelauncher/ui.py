@@ -3,6 +3,8 @@ from PySide import QtGui, QtCore
 import managers
 import sys
 import ecowrap
+import re
+import qdarkstyle
 
 
 class Launcher(QtGui.QMainWindow):
@@ -34,13 +36,9 @@ class Launcher(QtGui.QMainWindow):
         pixmap = QtGui.QPixmap(
             os.path.join(os.path.dirname(__file__), 'resources', 'rocket.png'))
 
-        style_path = os.path.join(
-            os.path.dirname(__file__), 'resources', 'style.css')
-        with file(style_path, 'r') as style_file:
-            self.setStyleSheet(style_file.read())
-
+        self.setStyleSheet(qdarkstyle.load_stylesheet())
         self.setWindowIcon(QtGui.QIcon(pixmap))
-        self.resize(800, 600)
+        self.resize(600, 400)
 
         self.central_widget = QtGui.QWidget(self)
         self.central_layout = QtGui.QVBoxLayout(self.central_widget)
@@ -79,26 +77,23 @@ class Launcher(QtGui.QMainWindow):
 
     def add_project(self, name, label, tools):
         self.projects[label] = tools
-        count = self.project_combo.count()
         self.project_combo.addItem(
             label,
             None,
-        )
-        self.project_combo.setItemData(
-            count + 1,
-            "HOLA",
-            QtCore.Qt.UserRole
         )
 
     def on_button_clicked(self):
         btn = self.sender()
 
         app_tool = btn.data.get('tool')
+        app_id = btn.data.get('id')
         app_exec = btn.data.get('executable')
         project = self.project_combo.currentText()
 
         tools = [app_tool]
-        tools += self.projects[project]
+        for key, val in self.projects[project].items():
+            if re.compile(key).match(app_id):
+                tools += val
 
         try:
             self.launch_eco(tools=tools, executable=app_exec)
@@ -113,7 +108,7 @@ class Launcher(QtGui.QMainWindow):
 
 class ApplicationButton(QtGui.QToolButton):
 
-    def __init__(self, name='Hola', icon=None, data=None, parent=None):
+    def __init__(self, name, icon=None, data=None, parent=None):
         super(ApplicationButton, self).__init__(parent=parent)
         self.data = data
 
@@ -130,7 +125,7 @@ class ApplicationButton(QtGui.QToolButton):
                 QtGui.QPixmap(icon)
             )
         )
-        self.setIconSize(QtCore.QSize(70, 70))
+        self.setIconSize(QtCore.QSize(50, 50))
 
 
 class FlowLayout(QtGui.QLayout):

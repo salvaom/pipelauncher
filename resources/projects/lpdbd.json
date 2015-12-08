@@ -1,5 +1,8 @@
 {
     "name": "lpdbd",
     "label": "Lead Paint: Delicious But Deadly",
-    "tools": ["mtoa1.2.1.0", "yeti2.0.1"]
+    "tools": {
+        "maya.+": ["mtoa1.2.4.3"],
+        "nuke.+": []
+    }
 }

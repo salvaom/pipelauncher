@@ -1,0 +1,7 @@
+{
+    "id": "houdini15.0.244.16",
+    "label": "Houdini15 15.0.244.16",
+    "tool": "houdini15.0.244.16",
+    "executable": "houdinifx",
+    "icon": "houdini-logo.png"
+}

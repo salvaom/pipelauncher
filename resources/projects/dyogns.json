@@ -1,5 +1,8 @@
 {
     "name": "dyogns",
     "label": "Dig Your Own Grave and Save",
-    "tools": ["mtoa1.2.4.3"]
+    "tools": {
+        "maya.+": ["mtoa1.2.4.3"],
+        "nuke.+": []
+    }
 }

@@ -5,7 +5,7 @@ import json
 def json_files(env):
     jsondata = []
 
-    resources_path = os.getenv('%s' % env)
+    resources_path = os.getenv(env)
     if not resources_path:
         raise ValueError('%s environment not created' % env)
 

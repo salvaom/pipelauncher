@@ -1,0 +1,7 @@
+{
+    "id": "nukex8.0v5",
+    "label": "NukeX 8.5v5",
+    "tool": "nuke8.0v5",
+    "executable": ["nuke8.0", "--nukex"],
+    "icon": "nukex-logo.png"
+}
