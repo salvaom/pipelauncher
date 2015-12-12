@@ -8,15 +8,20 @@ import qdarkstyle
 
 
 class Launcher(QtGui.QMainWindow):
+    '''Main window
+    '''
 
     def __init__(self, parent=None):
         super(Launcher, self).__init__(parent=parent)
+        # Setup the UI
         self.setupUi()
         self.projects = {}
 
+        # Create the application and project managers
         self.app_manager = managers.ApplicationManager()
         self.prj_manager = managers.ProjectManager()
 
+        # Fill the applications and the projects with them
         for key, val in self.app_manager.applications.items():
             self.add_app(
                 name=val.get('label'),
@@ -32,12 +37,18 @@ class Launcher(QtGui.QMainWindow):
             )
 
     def setupUi(self):
+        '''Sets up the launcher UI.'''
+
         self.setWindowTitle('Application Launcher')
-        pixmap = QtGui.QPixmap(
-            os.path.join(os.path.dirname(__file__), 'resources', 'rocket.png'))
+        rocket_path = os.path.join(
+            os.path.dirname(__file__),
+            'resources',
+            'rocket.png'
+        )
+        pixmap = QtGui.QPixmap(rocket_path)
+        self.setWindowIcon(QtGui.QIcon(pixmap))
 
         self.setStyleSheet(qdarkstyle.load_stylesheet())
-        self.setWindowIcon(QtGui.QIcon(pixmap))
         self.resize(600, 400)
 
         self.central_widget = QtGui.QWidget(self)
@@ -66,6 +77,16 @@ class Launcher(QtGui.QMainWindow):
         self.central_layout.addWidget(self.log)
 
     def add_app(self, name, icon, data):
+        '''Creates a new instance of an ApplicationButton with the data
+        in the arguments and adds it to the application's FlowLayout
+
+        :param name: Name of the application
+        :param icon: Icon of the application
+        :param data: Raw data from the ApplicationManager
+        :type name: str
+        :type icon: str
+        :type data: dict
+        '''
         btn = ApplicationButton(
             name=name,
             icon=icon,
@@ -76,6 +97,16 @@ class Launcher(QtGui.QMainWindow):
         self.app_layout.addWidget(btn)
 
     def add_project(self, name, label, tools):
+        '''Creates a new entry to the project's ComboBox. It also stores
+        the required tools in self.projects to fetch it later.
+
+        :param name: Name of the project
+        :param label: Label of the project
+        :param tools: Tools used for the project
+        :type name: str
+        :type label: str
+        :type tools: dict
+        '''
         self.projects[label] = tools
         self.project_combo.addItem(
             label,
@@ -83,18 +114,26 @@ class Launcher(QtGui.QMainWindow):
         )
 
     def on_button_clicked(self):
+        '''Executes the application and the project specified.
+        '''
+        # Get the button who called the action
         btn = self.sender()
 
+        # Extract the info from que button
         app_tool = btn.data.get('tool')
         app_id = btn.data.get('id')
         app_exec = btn.data.get('executable')
+
+        # Get the current project
         project = self.project_combo.currentText()
 
+        # Match the project tools with the App ID and add them.
         tools = [app_tool]
         for key, val in self.projects[project].items():
             if re.compile(key).match(app_id):
                 tools += val
 
+        # Launch the command and if it fails, report it.
         try:
             self.launch_eco(tools=tools, executable=app_exec)
         except Exception:
@@ -116,6 +155,7 @@ class ApplicationButton(QtGui.QToolButton):
         self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.setText(name)
 
+        # For relative paths, we look in the 'resources' folder
         if not os.path.isfile(icon):
             icon = os.path.join(
                 os.path.dirname(__file__), 'resources', icon)
